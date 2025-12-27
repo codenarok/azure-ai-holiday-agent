@@ -1,0 +1,126 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "triggers": {
+      "When_an_HTTP_request_is_received": {
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "method": "POST",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "description": "Searches the web for a given query and returns the results."
+      }
+    },
+    "actions": {
+      "GetSecret": {
+        "runAfter": {},
+        "type": "ApiConnection",
+        "inputs": {
+          "host": {
+            "connection": {
+              "name": "@parameters('$connections')['keyvault-1']['connectionId']"
+            }
+          },
+          "method": "get",
+          "path": "/secrets/@{encodeURIComponent('GOOGLE-API-KEY')}/value"
+        },
+        "runtimeConfiguration": {
+          "secureData": {
+            "properties": [
+              "inputs",
+              "outputs"
+            ]
+          }
+        }
+      },
+      "GetSecret1": {
+        "runAfter": {
+          "GetSecret": [
+            "Succeeded"
+          ]
+        },
+        "type": "ApiConnection",
+        "inputs": {
+          "host": {
+            "connection": {
+              "name": "@parameters('$connections')['keyvault-1']['connectionId']"
+            }
+          },
+          "method": "get",
+          "path": "/secrets/@{encodeURIComponent('GOOGLE-SEARCH-ENGINE-ID')}/value"
+        },
+        "runtimeConfiguration": {
+          "secureData": {
+            "properties": [
+              "inputs",
+              "outputs"
+            ]
+          }
+        }
+      },
+      "Response": {
+        "runAfter": {
+          "HTTP": [
+            "Succeeded"
+          ]
+        },
+        "type": "Response",
+        "kind": "Http",
+        "inputs": {
+          "statusCode": 200,
+          "body": "@body('HTTP')"
+        }
+      },
+      "HTTP": {
+        "runAfter": {
+          "GetSecret1": [
+            "Succeeded"
+          ]
+        },
+        "type": "Http",
+        "inputs": {
+          "uri": "https://customsearch.googleapis.com/customsearch/v1?key=@{body('GetSecret')?['value']}&cx=@{body('GetSecret1')?['value']}&q=@{uriComponent(triggerBody()?['query'])}",
+          "method": "GET"
+        },
+        "runtimeConfiguration": {
+          "contentTransfer": {
+            "transferMode": "Chunked"
+          }
+        }
+      }
+    },
+    "outputs": {},
+    "parameters": {
+      "$connections": {
+        "type": "Object",
+        "defaultValue": {}
+      }
+    }
+  },
+  "parameters": {
+    "$connections": {
+      "type": "Object",
+      "value": {
+        "keyvault-1": {
+          "id": "/subscriptions/<SUBSCRIPTION_ID>/providers/Microsoft.Web/locations/<LOCATION>/managedApis/keyvault",
+          "connectionId": "/subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP>/providers/Microsoft.Web/connections/<KEYVAULT_CONNECTION_NAME>",
+          "connectionName": "<KEYVAULT_CONNECTION_NAME>",
+          "connectionProperties": {
+            "authentication": {
+              "type": "ManagedServiceIdentity"
+            }
+          }
+        }
+      }
+    }
+  }
+}
