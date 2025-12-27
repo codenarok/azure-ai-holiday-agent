@@ -2,7 +2,7 @@
 
 ## The Problem: The "Shopping Density" Dilemma
 
-Every year, I plan a family holiday. Standard travel sites make it easy to filter by "Beach" or "Price," but my Mum and Sister consistently require "Shopping and Centrality." The challenge is that "Central" is often a marketing term that leads to AI hallucinations and unreliable recommendations. This project turns a recurring family need into a business case for a technical solution: move from *searching* to *verifying* by using AI agents and geospatial data.
+Every year, I plan a family holiday. Standard travel sites make it easy to filter by "Beach" or "Price," but my family consistently require "Shopping and Centrality." The challenge is that "Central" is often a marketing term that leads to AI hallucinations and unreliable recommendations. This project turns a recurring family need into a business case for a technical solution: move from *searching* to *verifying* by using AI agents and geospatial data.
 
 ## The Architecture: A Serverless Agentic Workflow
 
