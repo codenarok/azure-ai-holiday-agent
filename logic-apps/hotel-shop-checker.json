@@ -10,10 +10,6 @@
           "schema": {
             "type": "object",
             "properties": {
-              "HTTP_URI": {
-                "description": "URI for HTTP Request",
-                "type": "string"
-              },
               "HTTP_request_content": {
                 "description": "Content or Body of the HTTP Request",
                 "type": "string"
@@ -42,8 +38,8 @@
         "runAfter": {},
         "type": "Http",
         "inputs": {
-          "uri": "@triggerBody()?['HTTP_URI']",
-          "method": "@parameters('Method_')",
+          "uri": "https://atlas.microsoft.com/search/poi/json",
+          "method": "POST",
           "body": "@triggerBody()?['HTTP_request_content']"
         },
         "runtimeConfiguration": {
